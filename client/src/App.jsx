@@ -28,7 +28,7 @@ export default function App() {
 
     setLoadingResponse(true);
     try {
-      const responseFromServer = await fetch("http://localhost:3001/translate", {
+      const responseFromServer = await fetch("/translate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
