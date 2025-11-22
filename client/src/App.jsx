@@ -1,35 +1,90 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [inputText, setInputText] = useState("");
+  const [emojiPhrase, setEmojiPhrase] = useState("");
+  const [error, setError] = useState("");
+
+  const MAX_CHARS = 120;
+
+  function handleConvert() {
+    setError("");
+    setEmojiPhrase("");
+
+    const trimmedInputText = inputText.trim();
+
+    if (trimmedInputText.length === 0) {
+      setError("Type a phrase first");
+      return;
+    }
+
+    if (trimmedInputText.length > MAX_CHARS) {
+      setError(`Keep it under ${MAX_CHARS} characters.`);
+      return;
+    }
+
+    setEmojiPhrase("✅ (preview placeholder)");
+  }
+
+  function handleClear() {
+    setInputText("");
+    setEmojiPhrase("");
+    setError("");
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app-container">
+      <div className="page">
+        <h1 className="title">Emoji Story Converter</h1>
+        <p className="subtitle">Convert a short phrase and convert it to emojis!</p>
 
-export default App
+        <div className="card">
+          <label className="label" htmlFor="phrase-input">
+            Your phrase:
+          </label>
+
+          <textarea
+            id="phrase-input"
+            className="input"
+            rows={3}
+            placeholder='e.g., "Batman eats a burger"'
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            maxLength={MAX_CHARS}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleConvert();
+              }
+            }}
+          />
+
+          <div className="meta">
+            <span className="counter">
+              {inputText.length}/{MAX_CHARS}
+            </span>
+          </div>
+
+          {error && <p className="error">{error}</p>}
+
+          <div className="buttons">
+            <button className="btn primary" onClick={handleConvert}>
+              Convert
+            </button>
+            <button className="btn" onClick={handleClear}>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div className="output">
+          <h2 className="outputTitle">Emoji Story</h2>
+          <div className="outputBox">
+            {emojiPhrase ? emojiPhrase : "…"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
