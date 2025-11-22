@@ -5,10 +5,12 @@ export default function App() {
   const [inputText, setInputText] = useState("");
   const [emojiPhrase, setEmojiPhrase] = useState("");
   const [error, setError] = useState("");
+  const [loadingResponse, setLoadingResponse] = useState(false);
+
 
   const MAX_CHARS = 120;
 
-  function handleConvert() {
+  async function handleConvert() {
     setError("");
     setEmojiPhrase("");
 
@@ -24,7 +26,30 @@ export default function App() {
       return;
     }
 
-    setEmojiPhrase("✅ (preview placeholder)");
+    setLoadingResponse(true);
+    try {
+      const responseFromServer = await fetch("http://localhost:3001/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: trimmedInputText }),
+      });
+
+      const parsedResponse = await responseFromServer.json();
+      if (!responseFromServer.ok) {
+        setError(parsedResponse.error || "Something went wrong");
+      }
+
+      setEmojiPhrase(parsedResponse.emojiPhrase || "");
+    } catch (error) {
+      console.error(error);
+      setError("Network error — is the server running?");
+    } finally {
+      setLoadingResponse(false);
+    }
+
+
   }
 
   function handleClear() {
@@ -81,8 +106,13 @@ export default function App() {
         <div className="output">
           <h2 className="outputTitle">Emoji Story</h2>
           <div className="outputBox">
-            {emojiPhrase ? emojiPhrase : "…"}
+            {loadingResponse
+              ? "⏳ Converting..."
+              : emojiPhrase
+                ? emojiPhrase
+                : "…"}
           </div>
+
         </div>
       </div>
     </div>
