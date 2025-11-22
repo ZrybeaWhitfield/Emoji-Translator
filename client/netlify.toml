@@ -1,0 +1,21 @@
+[build]
+  base = "client"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/translate"
+  to = "https://emoji-translator-pd3i.onrender.com/translate"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "https://emoji-translator-pd3i.onrender.com/health"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
